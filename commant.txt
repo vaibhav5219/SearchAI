@@ -1,0 +1,48 @@
+1. npm init electron-app@latest searchai -- --template=webpack
+2. npm install --save-dev @babel/preset-react babel-loader @babel/core
+3. Add below inwebpack.rules.js =>
+  {
+    test: /\.jsx?$/,
+    use: {
+      loader: "babel-loader",
+      options: {
+        exclude: /node_modules/,
+        presets: ["@babel/preset-react"],
+      },
+    },
+  },
+  {
+    // loads .css files
+    test: /\.css$/,
+    include: [path.resolve(__dirname, "app/src")],
+    use: ["style-loader", "css-loader", "postcss-loader"],
+  },
+4. npm install --save react react-dom
+5. npm i --save-dev tailwindcss postcss-loader autoprefixer postcss
+6. npm install -D tailwindcss@3.4.3  # compatible version
+7. npx tailwindcss init
+8. npm install @tailwindcss/forms @tailwindcss/typography @tailwindcss/aspect-ratio
+9. add in webpack.renderer.config.js 
+    {
+      loader: "postcss-loader",
+      options: {
+        postcssOptions: {
+          plugins: [require("tailwindcss"), require("autoprefixer")],
+        },
+      },
+    },
+10. replace    import './index.css'; 
+  with   import './index.jsx'; in renderer.js
+11. Update tailwind.config.js 
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ["./src/**/*.{html,js,jsx}"],
+  theme: {
+    extend: {},
+  },
+  plugins: [
+    require("@tailwindcss/typography"),
+    require("@tailwindcss/forms"),
+    require("@tailwindcss/aspect-ratio")
+  ],
+};
