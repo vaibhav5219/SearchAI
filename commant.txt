@@ -46,3 +46,4 @@ module.exports = {
     require("@tailwindcss/aspect-ratio")
   ],
 };
+12. npm install lucide-react

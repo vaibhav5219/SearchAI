@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('node:path');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -11,8 +11,14 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    frame: false, // ✅ disables the default window controls/title bar
+    titleBarStyle: 'hiddenInset', // optional, more mac-like look
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+      // preload: path.join(__dirname, "preload.js"),
+      webviewTag: true,
+      nodeIntegration: false,
+      contextIsolation: true,
     },
     autoHideMenuBar: true,
   });
@@ -22,6 +28,25 @@ const createWindow = () => {
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
+  
+  // ✅ IPC listeners
+  ipcMain.on("window-minimize", () => {
+    if (mainWindow) mainWindow.minimize();
+  });
+
+  ipcMain.on("window-maximize", () => {
+    if (mainWindow) {
+      if (mainWindow.isMaximized()) {
+        mainWindow.unmaximize();
+      } else {
+        mainWindow.maximize();
+      }
+    }
+  });
+
+  ipcMain.on("window-close", () => {
+    if (mainWindow) mainWindow.close();
+  });
 };
 
 // This method will be called when Electron has finished
